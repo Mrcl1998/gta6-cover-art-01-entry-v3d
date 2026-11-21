@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Night Drive Cover Studio — Leonida after dark</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">ND</span>
+    <div>
+      <h1>Night Drive Cover Studio</h1>
+      <p>Leonida after dark — turn any photo into poster cover art, offline.</p>
+    </div>
+  </div>
+  <div class="top-actions">
+    <button id="undoBtn" type="button" title="Undo">Undo</button>
+    <button id="redoBtn" type="button" title="Redo">Redo</button>
+    <button id="resetBtn" type="button" title="Reset everything">Reset</button>
+    <button id="exportAllBtn" type="button" class="primary">Export all sizes</button>
+  </div>
+</header>
+
+<main class="studio">
+  <section class="preview-pane" aria-label="Live cover preview">
+    <div class="canvas-wrap">
+      <canvas id="coverCanvas" width="1080" height="1350" aria-label="Cover preview"></canvas>
+      <div class="preview-tag">LIVE PREVIEW &middot; 1080 &times; 1350</div>
+    </div>
+    <div class="size-row" role="group" aria-label="Export size">
+      <span>Export size:</span>
+      <button type="button" class="size-btn" data-size="1080x1080">1080&times;1080</button>
+      <button type="button" class="size-btn active" data-size="1080x1350">1080&times;1350</button>
+      <button type="button" class="size-btn" data-size="1920x1080">1920&times;1080</button>
+      <button type="button" class="size-btn" data-size="1080x1920">1080&times;1920 story</button>
+    </div>
+    <p id="status" role="status">Loading sample photos&hellip;</p>
+    <div class="downloads" id="downloads" hidden>
+      <span>Exported:</span>
+      <a id="dlSquare" download="night-drive-1080x1080.png">1080&times;1080</a>
+      <a id="dlPoster" download="night-drive-1080x1350.png">1080&times;1350</a>
+      <a id="dlWide" download="night-drive-1920x1080.png">1920&times;1080</a>
+      <a id="dlStory" download="night-drive-1080x1920.png">1080&times;1920</a>
+    </div>
+  </section>
+
+  <aside class="editor" aria-label="Cover editor">
+    <section class="panel-block">
+      <h2>1 &middot; Photos</h2>
+      <p class="hint">Drop photos anywhere, or pick files. One photo fills every panel, or give each panel its own.</p>
+      <label class="file-btn">Add photos
+        <input id="photoInput" type="file" accept="image/*" multiple>
+      </label>
+      <div class="sample-row">
+        <button type="button" id="sampleBoulevard" class="thumb-btn"><img src="./samples/boulevard.jpg" alt="Sample: boulevard at golden hour"><span>Boulevard</span></button>
+        <button type="button" id="samplePier" class="thumb-btn"><img src="./samples/pier.jpg" alt="Sample: pier over turquoise water"><span>Pier</span></button>
+      </div>
+      <label class="check"><input id="onePhotoAll" type="checkbox" checked> One photo across all panels</label>
+      <label class="field">Panel photo
+        <select id="panelPhoto"></select>
+      </label>
+      <div class="slider-row">
+        <label>Zoom <input id="zoomSlider" type="range" min="100" max="300" value="120"></label>
+        <label>Pan X <input id="panXSlider" type="range" min="-100" max="100" value="0"></label>
+        <label>Pan Y <input id="panYSlider" type="range" min="-100" max="100" value="0"></label>
+      </div>
+      <p class="hint">Tip: click a panel in the preview to select it, then drag it to reposition the photo.</p>
+    </section>
+
+    <section class="panel-block">
+      <h2>2 &middot; Layout</h2>
+      <div class="layout-grid" role="group" aria-label="Cover layout">
+        <button type="button" class="layout-btn active" data-layout="nine">Nine-panel grid</button>
+        <button type="button" class="layout-btn" data-layout="hero">Hero + three</button>
+        <button type="button" class="layout-btn" data-layout="fullbleed">Full-bleed</button>
+        <button type="button" class="layout-btn" data-layout="stack">Tilted snapshots</button>
+      </div>
+    </section>
+
+    <section class="panel-block">
+      <h2>3 &middot; Grade</h2>
+      <div class="grade-grid" role="group" aria-label="Colour grade">
+        <button type="button" class="grade-btn active" data-grade="sunset"><span class="swatch sw-sunset"></span>Vice Sunset</button>
+        <button type="button" class="grade-btn" data-grade="neon"><span class="swatch sw-neon"></span>Neon Night</button>
+        <button type="button" class="grade-btn" data-grade="pink"><span class="swatch sw-pink"></span>Pink Haze</button>
+        <button type="button" class="grade-btn" data-grade="teal"><span class="swatch sw-teal"></span>Teal Haze</button>
+        <button type="button" class="grade-btn" data-grade="golden"><span class="swatch sw-golden"></span>Golden Hour</button>
+        <button type="button" class="grade-btn" data-grade="mono"><span class="swatch sw-mono"></span>Mono Noir</button>
+      </div>
+      <label class="slider-row">Grade strength <input id="gradeSlider" type="range" min="0" max="100" value="72"></label>
+    </section>
+
+    <section class="panel-block">
+      <h2>4 &middot; Caption</h2>
+      <label class="field">Title
+        <input id="titleInput" type="text" maxlength="24" value="NIGHT DRIVE">
+      </label>
+      <label class="field">Subtitle (neon script)
+        <input id="subtitleInput" type="text" maxlength="40" value="Leonida after dark">
+      </label>
+      <label class="field">Badge text
+        <input id="badgeInput" type="text" maxlength="18" value="VICE CITY">
+      </label>
+      <label class="field">Heat (stars)
+        <input id="heatSlider" type="range" min="1" max="5" value="4">
+        <span id="heatLabel">★★★★☆</span>
+      </label>
+    </section>
+
+    <section class="panel-block">
+      <h2>5 &middot; Effects</h2>
+      <label class="check"><input id="grainCheck" type="checkbox" checked> Film grain</label>
+      <label class="check"><input id="vignetteCheck" type="checkbox" checked> Vignette</label>
+      <label class="check"><input id="halftoneCheck" type="checkbox" checked> Halftone title block</label>
+      <label class="check"><input id="bordersCheck" type="checkbox" checked> Inked panel borders + bands</label>
+    </section>
+  </aside>
+</main>
+
+<footer class="foot">
+  <p>Night Drive Cover Studio — 100% offline. Photos never leave this machine. Fonts: Anton &amp; Pacifico (SIL Open Font License). Original art only.</p>
+</footer>
+
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
